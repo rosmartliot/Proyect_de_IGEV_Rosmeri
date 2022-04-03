@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+ 
+
+ <!--Archivos tomados como plantilla de !HTML5 Boilerplate v8.0.0 | MIT License | https://html5boilerplate.com!-->
+  <!--link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,700' rel='stylesheet' type='text/css'-->
+   <link rel="stylesheet" href="css/main.css">
+  <script src="js/vendor/modernizr-3.11.2.min.js"></script> <!-- archivo no transformado-->
+  <script src="js/plugins.js"></script>  <!-- archivo no transformado-->
+  <script src="js/main.js"></script>
+
+  <!-- Bibliotecas con las que se experimentó-->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+  <meta name="theme-color" content="#fafafa">
+
+</head>
+
+<body>
+
+   <!-- Logo del grupo de desarrollo-->
+    <div class="sidebar">
+       <figure>
+       <img src="gadaba.png" alt="logotipo de ros" width="200" height="100"/> 
+      <span class="logo_name"></span>
+    
+    </div>
+
+<section class="home-section">
+
+
+ <header>
+
+   <div class="container clearfix">
+         <h1>Visualización - <span> Indicadores de enfermedades cardíacas</span> </h1>
+     </div>
+ </header>
+
+ <!-- Primer gráfico. Medidor de triaje-->
+
+     <div class="third widget doughnut" style="width: 300px; height: 383px">
+         <h3> Triaje de enfermedades cardíacas </h3>
+   
+         <div class="canvas-container" style="width: 259px; height: 157px">
+   
+        
+             <canvas id="Triaje" style="width: 259px; height: 157px" ></canvas> 
+      
+
+             	 <script>
+  // Script cargando los datos        	    	
+                      var csv = null;
+                      var datos = (function () {
+                      $.ajax({
+                          'async': false,
+                          'global': false,
+                          'crossDomain': true,
+                          'url': 'datosIG.csv',
+                          'dataType': 'text',
+                          'success': function (data) {
+                              csv = data;
+                          }
+                        });
+                        return csv;
+                      })();
+
+                       var array = csv.split(/\r?\n|\r/); 
+                       var a = [];
+                       var c0 = 0;
+                       var c1 = 0;
+                       var c2 = 0;
+                       var c3 = 0;
+                       var c4 = 0;
+         
+         //Ya quedan todas las filas dentro de a arregladas 
+          //Los datos se organizan en la fila i y la columna j, pidiendo por ese orden
+                     for (let i = 0; i < 304; i++) {
+                       console.log(`array: ${a[i] = array[i].split(',')}`);
+                         }
+
+                     for (i = 1; i < 304; i++){
+                      var j = 4;
+                              
+          //Se guardan los registros de cada triaje                              
+                         console.log(`a: ${ a[i][j] }`);
+                         if (a[i][j] == 0)
+                         	c0++;
+                         else if (a[i][j] == 1)
+                         	c1++;
+                         else if (a[i][j] == 2)
+                         	c2++;
+                         else if (a[i][j] == 3)
+                         	c3++;
+                         else if (a[i][j] == 4)
+                         	c4++;
+                       }
+          
+             //Se identifican con los colores dentificativos de cada triaje                                        
+                        var datad = [
+                         {
+                        value: c0,
+                         color:"#000099" //azul 
+                               },
+                         
+                            {
+                        value: c1,
+                         color:"#006600"  //verde 
+                               },
+                            {
+                              value : c2,
+                              color : "#FFCC00" //amarillo 
+                                 },
+                           {
+                        value: c3,
+                         color:"#FF6600"  //naranja
+                               },
+                             {
+                        value: c4,
+                         color:"#CC0000"  //rojo
+                               },
+                                                        
+                                    ] ; 
+
+                          var canvas = document.getElementById("Triaje");
+                         var ctx = canvas.getContext("2d");
+                        new Chart(ctx).Doughnut(datad);
+
+
+                        
+                     </script>
+               <span class="status"></span>   <!-- Centro del gráfico -->
+                <div class="chart-legend">
+                <ul>
+             <li class="c0"><strong>Sin urgencia</strong></li>
+             <li class="c1"><strong>Urgencia menor</strong></li>
+             <li class="c2"><strong>Urgencia</strong></li>
+             <li class="c3"><strong>Emergencia</strong></li>
+             <li class="c4"><strong>Resucitación</strong></li>
+               </ul>
+
+          </div>
+
+       </div>
+               
+     </div>
+   
+     <!-- Segundo gráfico. Coparación de niveles de colesterol para cada triaje-->
+ 
+     <div class="third widget line" width="900" height="250" style="width: 1050px; height: 383px;">
+
+     	  <h3> Nivel de colesterol según el valor de triaje </h3>
+         
+         <div class="canvas-container-2">
+             
+            <canvas id="grafica0" width="1040" height="300">
+	
+                <script>
+           //
+                       var ch0 = [];
+                       var ch1 = [];
+                       var ch2 = [];
+                       var ch3 = [];
+                       var ch4 = []; 
+                       var ch0x = [];	
+                       var ch1x = [];
+                       var ch2x = [];
+                       var ch3x = [];
+                       var ch4x = [];
+
+                    for (i = 1; i < 304; i++){
+                                                  
+                         if (a[i][4] == 0) 
+                         	 ch0.push(a[i][3]); //todos los valores de colesterol para el triaje 0
+                 
+                         else if (a[i][4] == 1)
+                         	ch1.push(a[i][3]);   //todos los valores de colesterol para el triaje 1
+                                                      
+                         else if (a[i][j] == 2)
+                         		ch2.push(a[i][3]);  //todos los valores de colesterol para el triaje 2
+                         	
+                         else if (a[i][j] == 3)
+	                          ch3.push(a[i][3]);   //todos los valores de colesterol para el triaje 3
+
+                         else if (a[i][j] == 4)
+                         		ch4.push(a[i][3]);  //todos los valores de colesterol para el triaje 4
+                         	
+                            }
+
+              //contador para guardar la cantidad de valores en los arrays anteriores
+                    for (r = 0; r < ch0.length; r++){
+                         	    ch0x.push(r);
+                         	}
+                    for (r = 0; r < ch1.length; r++){
+                         	    ch1x.push(r);
+                         	}
+                    for (r = 0; r < ch2.length; r++){
+                         	    ch2x.push(r);
+                         	}
+                    for (r = 0; r < ch3.length; r++){
+                         	    ch3x.push(r);
+                         	}
+                    for (r = 0; r < ch4.length; r++){
+                         	    ch4x.push(r);
+                         	}
+
+            
+                 //creando el dataset que se relacionará en las gráficas
+                     var datasets = [];
+
+      
+                  var datasetch0 = {label:"triaje0", data:ch0, fill: true, fillColor : "rgba(0,0,153,0.1)", //area de los puntos
+                     strokeColor : "#000099", //línea a une puntos
+                     pointColor : "#000099", //dentro del punto
+                     pointStrokeColor : "#000099", //contorno del punto
+                     yAxisID:'y'}
+                     datasets.push(datasetch0)
+                 var datasetch1 = {label:"triaje1", data:ch1, fill: true, fillColor : "rgba(0,102,0,0.1)", //area de los puntos
+                     strokeColor : "#006600", //línea a une puntos
+                     pointColor : "#006600", //dentro del punto
+                     pointStrokeColor : "#006600", //contorno del punto
+                     yAxisID:'y'}
+                     datasets.push(datasetch1)
+                 var datasetch2 = {label:"triaje2", data:ch2, fill: true, fillColor : "rgba(255,204,0,0.2)", //area de los puntos
+                     strokeColor : "#FFCC00", //línea a une puntos
+                     pointColor : "#FFCC00", //dentro del punto
+                     pointStrokeColor : "#FFCC00", //contorno del punto
+                     yAxisID:'y'}
+                     datasets.push(datasetch2)
+                 var datasetch3 = {label:"triaje3", data:ch3, fill: true, fillColor : "rgba(255,102,0,0.2)", //area de los puntos
+                     strokeColor : "#FF6600", //línea a une puntos
+                     pointColor : "#FF6600", //dentro del punto
+                     pointStrokeColor : "#FF6600", //contorno del punto
+                     yAxisID:'y'}
+                     datasets.push(datasetch3)
+                 var datasetch4 = {label:"triaje4", data:ch4, fill: true, fillColor : "rgba(204,0,0,0.2)", //area de los puntos
+                     strokeColor : "#CC0000", //línea a une puntos
+                     pointColor : "#CC0000", //dentro del punto
+                     pointStrokeColor : "#CC0000", //contorno del punto
+                     yAxisID:'y'}
+                     datasets.push(datasetch4)
+
+               //Se establece un array vacío con el número de valores del array ch1, que es el que se toma como referencia en cuanto a cantidad de puntos a representar. Se hace para no tener número cargando la gráfica en el eje x, ya que no son de interés en esta y sí los números que se obtienen al tocar cada punto.
+                     var array11 = [];                   
+                    for (i = 0; i < ch1x.length; i++){
+                           array11.push("");
+                                    } 
+       
+                           var data = {
+                               labels : array11, 
+                               datasets : datasets
+                                      };
+                        
+
+                       var canvas = document.getElementById("grafica0");
+                       var ctx = canvas.getContext("2d");
+                       new Chart(ctx).Line(data);   
+                      
+                    </script>
+
+          </canvas>
+
+        </div>
+     </div>
+
+    <!-- Tercer espacio de gráficos. información de edades y género por cada registor con algún nivel de angina de pecho-->
+    <!-- Se dividen en 4, una por cada nivel-->
+     <!-- Grafica 1 Nivel 4-->
+
+     <div class="third widget" style="width: 303px; height: 800px;">
+         <div class="chart-legend-32">
+             <h3>Edad de las personas con nivel_dolor_torácico: asintomático </h3>
+
+               <li ><font size=3> <strong> 144 personas </strong></font></li>
+               <li class="sex0a4"> <strong> 40  </strong></li><li class="sex1a4"> <strong> 104  </strong></li>
+
+         </div>
+         <div class="canvas-container" >
+             <canvas id="departments" style="width: 279px; height: 300px;">
+
+                <script type="text/javascript">
+	               var ang4= [];
+                   var sex1a4 = [];
+                   var sex0a4 = [];
+                  
+                    // Guardar los registros con nivel 4 de angina de pecho
+    
+                      for (i = 1; i < 304; i++){
+                      	if (a[i][2] == 4) 
+                            ang4.push(a[i][0]);
+                      }
+                  
+                  //Si tiene angina de pecho 4 y es masculino, guarda su edad 
+                         	 
+                        for (i = 1; i < 304; i++){
+                                                  
+                         if (a[i][2] == 4 && a[i][1] == 1)  
+                         	  sex1a4.push(a[i][0]); 
+
+                  //Si tiene angina de pecho 4 y es femenino, guarda su edad 
+                                   
+                        else if(a[i][2] == 4 && a[i][1] == 0)  
+
+                                sex0a4.push(a[i][0]);
+                                      
+                            }
+
+                           
+                  // //Se establece un array vacío para no mostrar valores irrelevantes en el eje x 
+                            var arraych4 = [];
+
+                        for (i = 0; i < ang4.length; i++){
+                           arraych4.push("");
+
+                                    }
+
+                 var datasetang = [];
+                
+                 var dataang = {label:"edad de mujeres con angina de pecho 4", data:sex0a4, fill: true, fillColor : "rgba(255,0,255,0.2)", //area de los puntos
+                     strokeColor : "#FF00FF", //línea q une puntos
+                     pointColor : "#FF00FF", //dentro del punto
+                     pointStrokeColor : "#FF00FF", //contorno del punto
+                     yAxisID:'y'}
+                     datasetang.push(dataang)  
+
+                 var data = {
+                 labels : arraych4,
+                 datasets : datasetang
+    
+                  }
+                 var canvas = document.getElementById("departments");
+                 var ctx = canvas.getContext("2d");
+                 new Chart(ctx).Radar(data);
+                  
+                 </script>
+            </canvas>
+
+            <canvas id="departments-1" style="width: 279px; height: 300px;">
+
+                    <script type="text/javascript">
+	                 
+
+                  var datasetang = [];
+                  var dataang14 = {label:"edad de hombres con angina de pecho 4", data:sex1a4, fill: true, fillColor : "rgba(102,204,204,0.2)", //area de los puntos
+                     strokeColor : "#66CCCC", //línea a une puntos
+                     pointColor : "#66CCCC", //dentro del punto
+                     pointStrokeColor : "#66CCCC", //contorno del punto
+                     yAxisID:'y'}
+                     datasetang.push(dataang14) 
+                  var data = {
+                  labels : arraych4,
+                  datasets : datasetang
+    
+                     }
+                  var canvas = document.getElementById("departments-1");
+                  var ctx = canvas.getContext("2d");
+                  new Chart(ctx).Radar(data);
+  
+                   </script>
+          </canvas>
+      </div>
+ </div>
+
+
+  <!-- Gráfica 2 Nivel 3-->
+
+ <div class="third widget" style="width: 303px; height: 800px;">
+         <div class="chart-legend-22">
+             <h3>Edad de las personas con nivel_dolor_torácico: dolor no anginoso </h3>
+
+               <li ><font size=3> <strong> 86 personas </strong></font></li>
+               <li class="sex0a3"> <strong> 35  </strong></li><li class="sex1a3"> <strong> 51  </strong></li>
+
+         </div>
+         <div class="canvas-container" >
+             <canvas id="departments3.0" style="width: 279px; height: 300px;">
+
+                <script type="text/javascript">
+	
+                   var ang3= [];
+                   var sex1a3 = [];
+                   var sex0a3 = [];
+                      
+                      for (i = 1; i < 304; i++){
+                      	if (a[i][2] == 3) //si tiene ese nivel de angina de pecho
+                            ang3.push(a[i][0]);
+                      }
+                  
+                        for (i = 1; i < 304; i++){
+                          if (a[i][2] == 3 && a[i][1] == 1)  //si tiene angina de pecho 3 y es masculino, me muestra su edad 
+                         	 sex1a3.push(a[i][0]); 
+                                  
+                        else if(a[i][2] == 3 && a[i][1] == 0)  //femenino
+                             sex0a3.push(a[i][0]);
+                                                                              	
+                            }
+
+                        var arraych3 = [];
+
+                        for (i = 0; i < ang3.length; i++){
+                           arraych3.push("");
+
+                                    }
+                 
+                 var datasetang = [];
+                
+                 var dataang = {label:"edad de mujeres con angina de pecho 3", data:sex0a3, fill: true, fillColor : "rgba(255,0,204,0.2)", //area de los puntos
+                     strokeColor : "#FF00CC", //línea q une puntos
+                     pointColor : "#FF00CC", //dentro del punto
+                     pointStrokeColor : "#FF00CC", //contorno del punto
+                     yAxisID:'y'}
+                     datasetang.push(dataang)  
+                 var data = {
+                 labels : arraych3,
+                 datasets : datasetang
+    
+                  }
+                 var canvas = document.getElementById("departments3.0");
+                 var ctx = canvas.getContext("2d");
+                 new Chart(ctx).Radar(data);
+
+                   </script>
+            </canvas>
+
+ 
+
+             <canvas id="departments3.1" style="width: 279px; height: 300px;">
+
+                    <script type="text/javascript">
+	              var datasetang = [];
+                  var dataang13 = {label:"edad de hombres con angina de pecho 3", data:sex1a3, fill: true, fillColor : "rgba(0,153,255,0.2)", //area de los puntos
+                     strokeColor : "#0099FF", //línea a une puntos
+                     pointColor : "#0099FF", //dentro del punto
+                     pointStrokeColor : "#0099FF", //contorno del punto
+                     yAxisID:'y'}
+                     datasetang.push(dataang13) 
+
+                  var data = {
+                  labels : arraych3,
+                  datasets : datasetang
+    
+                     }
+                  var canvas = document.getElementById("departments3.1");
+                  var ctx = canvas.getContext("2d");
+                  new Chart(ctx).Radar(data);
+
+                    </script>
+
+          </canvas>
+ 
+     </div>
+ </div>
+ 
+ <!-- Gráfica 3 Nivel 2-->
+
+
+ <div class="third widget" style="width: 303px; height: 800px;">
+         <div class="chart-legend-12">
+             <h3>Edad de las personas con nivel_dolor_torácico: angina atípica </h3>
+               <li ><font size=3> <strong> 50 personas </strong></font></li>
+               <li class="sex0a2"> <strong> 18  </strong></li><li class="sex1a2"> <strong> 32  </strong></li>
+
+         </div>
+         <div class="canvas-container" >
+             <canvas id="departments2.0" style="width: 279px; height: 300px;">
+
+                <script type="text/javascript">
+	
+                   var ang2= [];
+                   var sex1a2 = [];
+                   var sex0a2 = [];
+                      
+                      for (i = 1; i < 304; i++){
+                      	if (a[i][2] == 2) //si tiene ese nivel de angina de pecho
+                            ang2.push(a[i][0]);
+                      }
+                  
+                        for (i = 1; i < 304; i++){
+                          if (a[i][2] == 2 && a[i][1] == 1)  //si tiene angina de pecho 3 y es masculino, me muestra su edad 
+                         	 sex1a2.push(a[i][0]); 
+                                  
+                        else if(a[i][2] == 2 && a[i][1] == 0)  //femenino
+                             sex0a2.push(a[i][0]);
+                                                                              	
+                            }
+
+                        var arraych2 = [];
+
+                        for (i = 0; i < ang2.length; i++){
+                           arraych2.push("");
+
+                                    }
+                 
+                 var datasetang = [];
+                
+                 var dataang = {label:"edad de mujeres con angina de pecho 2", data:sex0a2, fill: true, fillColor : "rgba(255,0,153,0.2)", //area de los puntos
+                     strokeColor : "#FF0099", //línea q une puntos
+                     pointColor : "#FF0099", //dentro del punto
+                     pointStrokeColor : "#FF0099", //contorno del punto
+                     yAxisID:'y'}
+                     datasetang.push(dataang)  
+                 var data = {
+                 labels : arraych2,
+                 datasets : datasetang
+    
+                  }
+                 var canvas = document.getElementById("departments2.0");
+                 var ctx = canvas.getContext("2d");
+                 new Chart(ctx).Radar(data);
+
+                   </script>
+            </canvas>
+
+ 
+
+             <canvas id="departments2.1" style="width: 279px; height: 300px;">
+
+                    <script type="text/javascript">
+	              var datasetang = [];
+                  var dataang12 = {label:"edad de hombres con angina de pecho 2", data:sex1a2, fill: true, fillColor : "rgba(0,102,204,0.2)", //area de los puntos
+                     strokeColor : "#0066CC", //línea a une puntos
+                     pointColor : "#0066CC", //dentro del punto
+                     pointStrokeColor : "#0066CC", //contorno del punto
+                     yAxisID:'y'}
+                     datasetang.push(dataang12) 
+
+                  var data = {
+                  labels : arraych2,
+                  datasets : datasetang
+    
+                     }
+                  var canvas = document.getElementById("departments2.1");
+                  var ctx = canvas.getContext("2d");
+                  new Chart(ctx).Radar(data);
+
+                    </script>
+
+          </canvas>
+ 
+     </div>
+ </div>
+
+<!-- Gráfica 4 Nivel 1-->
+
+  <div class="third widget" style="width: 303px; height: 800px;">
+         <div class="chart-legend-2">
+             <h3>Edad de las personas con nivel_dolor_torácico: angina típica </h3>
+             
+             <li >	<font size=3> <strong> 23 personas </strong></font></li>
+             <li class="sex0a1"> <strong> 4  </strong></li><li class="sex1a1"> <strong> 19  </strong></li>
+            
+         </div>
+         <div class="canvas-container" >
+             <canvas id="departments1.0" style="width: 279px; height: 300px;">
+
+                <script type="text/javascript">
+	
+                   var ang1= [];
+                   var sex1a1 = [];
+                   var sex0a1 = [];
+                      
+                      for (i = 1; i < 304; i++){
+                      	if (a[i][2] == 1) //si tiene ese nivel de angina de pecho
+                            ang1.push(a[i][0]);
+                      }
+                  
+                        for (i = 1; i < 304; i++){
+                          if (a[i][2] == 1 && a[i][1] == 1)  //si tiene angina de pecho 3 y es masculino, me muestra su edad 
+                         	 sex1a1.push(a[i][0]); 
+                                  
+                        else if(a[i][2] == 1 && a[i][1] == 0)  //femenino
+                             sex0a1.push(a[i][0]);
+                                                                              	
+                            }
+
+                        var arraych1 = [];
+
+                        for (i = 0; i < ang1.length; i++){
+                           arraych1.push("");
+
+                                    }
+                 
+                 var datasetang = [];
+                
+                 var dataang = {label:"edad de mujeres con angina de pecho 1", data:sex0a1, fill: true, fillColor : "rgba(255,0,102,0.2)", //area de los puntos
+                     strokeColor : "#FF0066", //línea que une puntos
+                     pointColor : "#FF0066", //dentro del punto
+                     pointStrokeColor : "#FF0066", //contorno del punto
+                     yAxisID:'y'}
+                     datasetang.push(dataang)  
+                 var data = {
+                 labels : arraych1,
+                 datasets : datasetang
+    
+                  }
+                 var canvas = document.getElementById("departments1.0");
+                 var ctx = canvas.getContext("2d");
+                 new Chart(ctx).Radar(data);
+
+                   </script>
+            </canvas>
+
+ 
+
+             <canvas id="departments1.1" style="width: 279px; height: 300px;">
+
+                    <script type="text/javascript">
+
+	              var datasetang = [];
+                  var dataang11 = {label:"edad de hombres con angina de pecho 1", data:sex1a1, fill: true, fillColor : "rgba(51,51,204,0.2)", //area de los puntos
+                     strokeColor : "#3333CC", //línea a une puntos
+                     pointColor : "#3333CC", //dentro del punto
+                     pointStrokeColor : "#3333CC", //contorno del punto
+                     yAxisID:'y'}
+                     datasetang.push(dataang11) 
+
+                  var data = {
+                  labels : arraych1,
+                  datasets : datasetang
+    
+                     }
+                  var canvas = document.getElementById("departments1.1");
+                  var ctx = canvas.getContext("2d");
+                  new Chart(ctx).Radar(data);
+
+
+                    </script>
+
+          </canvas>
+ 
+     </div>
+ </div>
+
+  </section>
+
+</body>
+
+</html>
